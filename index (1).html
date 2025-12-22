@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXE Beauty Salon - Минск</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --black: #1a1a1a;
+            --dark-gray: #2d2d2d;
+            --gray: #555555;
+            --red: #ff135a;
+            --pink: #ff4d7a;
+            --white: #ffffff;
+            --light-gray: #f8f8f8;
+            --gold: #d4af37;
+            --light-gold: #f4e4b7;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
+            color: var(--black);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--black) 0%, var(--dark-gray) 100%);
+            color: var(--white);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--white);
+            font-family: 'Playfair Display', serif;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: var(--red);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--red);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--red);
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            min-height: 70vh;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: var(--black);
+            line-height: 1.2;
+        }
+
+        .hero h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--gray);
+            font-weight: normal;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .hero p {
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            color: var(--gray);
+        }
+
+        .hero-image {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-image:before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--red) 0%, var(--pink) 100%);
+            border-radius: 20px;
+            transform: rotate(5deg);
+            z-index: -1;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .hero-image img:hover {
+            transform: translateY(-10px);
+        }
+
+        .services-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--red) 0%, var(--pink) 100%);
+            color: var(--white);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(255, 19, 90, 0.3);
+        }
+
+        .services-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 19, 90, 0.4);
+        }
+
+        .map-container {
+            margin: 3rem 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-text {
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--gray);
+            font-style: italic;
+            padding: 1rem;
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Auth Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-content:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--red), var(--pink));
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: var(--black);
+            font-size: 1.8rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--red);
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(255, 19, 90, 0.1);
+        }
+
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--red);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Button from Uiverse - Improved */
+        .button {
+            --main-size: 1.2em;
+            --color-text: #ffffff;
+            --color-background: #ff135a;
+            --color-background-hover: #ff1472;
+            --color-outline: #ff145a40;
+            --color-shadow: #00000040;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 50px;
+            padding: 0.8em 1.5em;
+            font-family: "Poppins", sans-serif;
+            font-weight: 600;
+            font-size: var(--main-size);
+            color: var(--color-text);
+            background: linear-gradient(135deg, var(--red) 0%, var(--pink) 100%);
+            box-shadow: 0 5px 15px rgba(255, 19, 90, 0.3);
+            transition: 0.5s;
+            width: 100%;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .button:hover:before {
+            left: 100%;
+        }
+
+        .button:active {
+            transform: scale(0.95);
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 19, 90, 0.4);
+        }
+
+        .button span {
+            margin-right: 0.3em;
+            transition: 0.5s;
+        }
+
+        .button:hover span {
+            text-shadow: 2px 2px 5px var(--color-shadow);
+        }
+
+        .button:active span {
+            text-shadow: none;
+        }
+
+        .button svg {
+            height: 0.8em;
+            fill: var(--color-text);
+            margin-right: -0.16em;
+            position: relative;
+            transition: 0.5s;
+        }
+
+        .button:hover svg {
+            margin-right: 0.66em;
+            transition: 0.5s;
+            filter: drop-shadow(2px 2px 2.5px var(--color-shadow));
+        }
+
+        .button:active svg {
+            filter: none;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .service-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--red), var(--pink));
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card h3 {
+            color: var(--black);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .service-card p {
+            color: var(--gray);
+        }
+
+        .price {
+            color: var(--red);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Master Cards */
+        .master-card {
+            display: flex;
+            background-color: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin: 2rem 0;
+            transition: var(--transition);
+        }
+
+        .master-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .master-image {
+            width: 250px;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .master-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .master-card:hover .master-image img {
+            transform: scale(1.05);
+        }
+
+        .master-info {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .master-info h3 {
+            color: var(--red);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .master-info p {
+            margin-bottom: 0.5rem;
+            color: var(--gray);
+        }
+
+        /* Booking Form */
+        .booking-form {
+            background-color: var(--white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-form:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--red), var(--pink));
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .alert {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #c62828;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #2e7d32;
+        }
+
+        /* Appointments Table */
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background-color: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .appointments-table th,
+        .appointments-table td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appointments-table th {
+            background: linear-gradient(135deg, var(--black) 0%, var(--dark-gray) 100%);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .appointments-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-pending {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .status-confirmed {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .status-cancelled {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .status-completed {
+            color: #2196f3;
+            font-weight: bold;
+        }
+
+        .cancel-appointment {
+            background: linear-gradient(135deg, #f44336, #e53935);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .cancel-appointment:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(244, 67, 54, 0.3);
+        }
+
+        /* Profile Section */
+        .profile-section {
+            background-color: var(--white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-section:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--red), var(--pink));
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 1.5rem;
+            border: 3px solid var(--red);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info h2 {
+            color: var(--black);
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .profile-info p {
+            color: var(--gray);
+        }
+
+        /* Location Section */
+        .location-info {
+            background-color: var(--white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .location-info:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--red), var(--pink));
+        }
+
+        .location-links {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .location-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--black) 0%, var(--dark-gray) 100%);
+            color: var(--white);
+            padding: 0.7rem 1.2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .location-link:hover {
+            background: linear-gradient(135deg, var(--red) 0%, var(--pink) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 19, 90, 0.3);
+        }
+
+        .image-carousel {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--red) var(--light-gray);
+        }
+
+        .image-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .image-carousel::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 10px;
+        }
+
+        .image-carousel::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--red) 0%, var(--pink) 100%);
+            border-radius: 10px;
+        }
+
+        .carousel-image {
+            width: 300px;
+            height: 200px;
+            border-radius: 15px;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .carousel-image:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .carousel-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--black) 0%, var(--dark-gray) 100%);
+            color: var(--white);
+            text-align: center;
+            padding: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: linear-gradient(135deg, var(--black) 0%, var(--dark-gray) 100%);
+                padding: 1rem 2rem;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .master-card {
+                flex-direction: column;
+            }
+
+            .master-image {
+                width: 100%;
+                height: 300px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-row .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo"><i class="fas fa-crown"></i>LUXE <span>Beauty</span></div>
+            <div class="nav-links" id="navLinks">
+                <a href="#" data-page="home">Главная</a>
+                <a href="#" data-page="services">Услуги</a>
+                <a href="#" data-page="booking">Онлайн запись</a>
+                <a href="#" data-page="appointments">Мои записи</a>
+                <a href="#" data-page="masters">Мастера</a>
+                <a href="#" data-page="location">Контакты</a>
+                <a href="#" data-page="profile" id="profileLink" style="display: none;">Профиль</a>
+                <a href="#" id="loginLink">Войти</a>
+                <a href="#" id="logoutLink" style="display: none;">Выйти</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Главная страница -->
+        <section id="home" class="page-section active">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>LUXE Beauty Salon в Минске</h1>
+                    <h2>Искусство красоты и безупречного стиля</h2>
+                    <p>Мы создаем неповторимые образы, подчеркивая вашу индивидуальность. Наши мастера - профессионалы с многолетним опытом, которые используют только премиальные продукты и современные техники.</p>
+                    <p>Станьте частью мира роскоши и стиля. Узнавайте о специальных предложениях первыми и получайте эксклюзивные скидки при записи через наш сайт.</p>
+                    <a href="#" class="services-button" data-page="services">Открыть каталог услуг</a>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="LUXE Beauty Salon">
+                </div>
+            </div>
+
+            <div class="map-container">
+                <iframe src="https://yandex.com/map-widget/v1/?org=161686641314" width="100%" height="400" frameborder="0" allowfullscreen="true"></iframe>
+            </div>
+
+            <div class="info-text">
+                Всё что вам нужно - в панели навигации выше! Откройте для себя мир премиального сервиса.
+            </div>
+        </section>
+
+        <!-- Виды услуг -->
+        <section id="services" class="page-section">
+            <h2>Наши услуги</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3>Женские стрижки</h3>
+                    <p>Стрижки любой сложности с учетом особенностей волос и формы лица</p>
+                    <div class="price">Цена от 35 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Подравнивание</h3>
+                    <p>Корректировка формы и длины стрижки</p>
+                    <div class="price">Цена от 25 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Подравнивание+</h3>
+                    <p>Расширенная услуга подравнивания с укладкой</p>
+                    <div class="price">Цена от 35 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Стрижка детская (до 5 лет)</h3>
+                    <p>Специальный подход к детским стрижкам</p>
+                    <div class="price">Цена от 15 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Стрижка челки</h3>
+                    <p>Корректировка и оформление челки</p>
+                    <div class="price">Цена от 7 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Комплекс "Стрижка+Борода"</h3>
+                    <p>Полный комплекс услуг для мужчин</p>
+                    <div class="price">Цена от 45 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Мужская стрижка (Машинка + ножницы)</h3>
+                    <p>Классическая мужская стрижка с использованием современных техник</p>
+                    <div class="price">Цена от 35 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Оформление бороды и усов</h3>
+                    <p>Создание аккуратного и стильного образа</p>
+                    <div class="price">Цена от 20 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Подростковая стрижка (с 6 до 12 лет)</h3>
+                    <p>Современные стрижки для подростков</p>
+                    <div class="price">Цена от 30 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Стрижка наголо</h3>
+                    <p>Аккуратная стрижка под ноль с последующим уходом</p>
+                    <div class="price">Цена от 15 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Укладка</h3>
+                    <p>Создание идеальной укладки с профессиональными средствами</p>
+                    <div class="price">Цена от 20 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>AIRTOUCH</h3>
+                    <p>Сложное окрашивание в технике "airtouch", тонирование, сушка, укладка</p>
+                    <div class="price">Цена от 180 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Blond корни</h3>
+                    <p>Обесцвечивание корня до 4 см порошком, сушка, укладка</p>
+                    <div class="price">Цена от 100 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Blond корни+</h3>
+                    <p>Обесцвечивание корня от 5 до 12 см порошком, сушка, укладка</p>
+                    <div class="price">Цена от 130 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>microМелирование</h3>
+                    <p>Сложное окрашивание в технике "microМелирование" тонирование, сушка, укладка</p>
+                    <div class="price">Цена от 180 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Окрашивание корня</h3>
+                    <p>Окрашивание корня до 5 см красителем, сушка, укладка</p>
+                    <div class="price">Цена от 80 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Сложное окрашивание</h3>
+                    <p>Сложная техника "balayage", "shatush" и другие комбо-техники, тонирование, сушка, укладка</p>
+                    <div class="price">Цена от 120 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Тонирование длины волос</h3>
+                    <p>Тонирование длины волос красителем, сушка, укладка</p>
+                    <div class="price">Цена от 30 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Локоны+</h3>
+                    <p>Мытье головы, сушка, укладка "локоны" с использованием стайлингов</p>
+                    <div class="price">Цена от 50 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Прическа коммерческая</h3>
+                    <p>С использованием стайлингов без мытья</p>
+                    <div class="price">Цена от 65 BYN</div>
+                </div>
+                <div class="service-card">
+                    <h3>Укладка</h3>
+                    <p>Мытье головы, сушка, укладка стайлингом или брашингом</p>
+                    <div class="price">Цена от 25 BYN</div>
+                </div>
+            </div>
+            <div class="info-text">
+                Номер совета по прическе и выбора типа прически: +375 (33) 361-95-02
+            </div>
+        </section>
+
+        <!-- Записаться онлайн -->
+        <section id="booking" class="page-section">
+            <h2>Записаться онлайн</h2>
+            <div class="booking-form">
+                <div id="bookingAlert" class="alert" style="display: none;"></div>
+                <div id="bookingSuccess" class="success" style="display: none;"></div>
+                <form id="bookingForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">ФИО</label>
+                            <input type="text" id="fullName" name="fullName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bookingDate">Дата</label>
+                            <input type="date" id="bookingDate" name="bookingDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookingTime">Время</label>
+                            <input type="time" id="bookingTime" name="bookingTime" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="serviceType">Вид стрижки</label>
+                            <select id="serviceType" name="serviceType" required>
+                                <option value="">Выберите услугу</option>
+                                <option value="Женские стрижки">Женские стрижки</option>
+                                <option value="Подравнивание">Подравнивание</option>
+                                <option value="Подравнивание+">Подравнивание+</option>
+                                <option value="Стрижка детская">Стрижка детская (до 5 лет)</option>
+                                <option value="Стрижка челки">Стрижка челки</option>
+                                <option value="Комплекс Стрижка+Борода">Комплекс "Стрижка+Борода"</option>
+                                <option value="Мужская стрижка">Мужская стрижка (Машинка + ножницы)</option>
+                                <option value="Оформление бороды и усов">Оформление бороды и усов</option>
+                                <option value="Подростковая стрижка">Подростковая стрижка (с 6 до 12 лет)</option>
+                                <option value="Стрижка наголо">Стрижка наголо</option>
+                                <option value="Укладка">Укладка</option>
+                                <option value="AIRTOUCH">AIRTOUCH</option>
+                                <option value="Blond корни">Blond корни</option>
+                                <option value="Blond корни+">Blond корни+</option>
+                                <option value="microМелирование">microМелирование</option>
+                                <option value="Окрашивание корня">Окрашивание корня</option>
+                                <option value="Сложное окрашивание">Сложное окрашивание</option>
+                                <option value="Тонирование длины волос">Тонирование длины волос</option>
+                                <option value="Локоны+">Локоны+</option>
+                                <option value="Прическа коммерческая">Прическа коммерческая</option>
+                                <option value="Укладка">Укладка</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="comment">Комментарий к стрижке</label>
+                            <textarea id="comment" name="comment" rows="4" style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 10px; font-family: 'Poppins', sans-serif;"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="button">
+                        <span>Записаться</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 43">
+                            <polygon points="39.58,4.46 44.11,0 66,21.5 44.11,43 39.58,38.54 56.94,21.5"></polygon>
+                            <polygon points="19.79,4.46 24.32,0 46.21,21.5 24.32,43 19.79,38.54 37.15,21.5"></polygon>
+                            <polygon points="0,4.46 4.53,0 26.42,21.5 4.53,43 0,38.54 17.36,21.5"></polygon>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Увидеть записи -->
+        <section id="appointments" class="page-section">
+            <h2>Ваши записи</h2>
+            <table class="appointments-table">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Время</th>
+                        <th>Имя</th>
+                        <th>Услуга</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="appointmentsList">
+                    <!-- Записи будут загружены здесь -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Мастера -->
+        <section id="masters" class="page-section">
+            <h2>Наши мастера</h2>
+            <div class="master-card">
+                <div class="master-image">
+                    <img src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Ольга Качуро">
+                </div>
+                <div class="master-info">
+                    <h3>Ольга Качуро</h3>
+                    <p><i class="fas fa-birthday-cake"></i> 45 лет, стаж 20+ лет</p>
+                    <p><i class="fas fa-star"></i> Уровень: профессиональный</p>
+                    <p>Опытный мастер с многолетним стажем работы. Специализируется на сложных окрашиваниях и женских стрижках. Постоянно повышает квалификацию на международных семинарах.</p>
+                </div>
+            </div>
+            <div class="master-card">
+                <div class="master-image">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Анна Иванова">
+                </div>
+                <div class="master-info">
+                    <h3>Анна Иванова</h3>
+                    <p><i class="fas fa-birthday-cake"></i> 32 года, стаж 10 лет</p>
+                    <p><i class="fas fa-star"></i> Уровень: эксперт</p>
+                    <p>Специалист по мужским стрижкам и оформлению бороды. Владеет современными техниками стрижки и знает все о тенденциях мужской моды.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Где находимся -->
+        <section id="location" class="page-section">
+            <h2>Где находимся</h2>
+            <div class="location-info">
+                <p><strong>Адрес:</strong> Minsk Belarus Ул.Полевая 10.</p>
+                <p><strong>Телефон:</strong> +375 (33) 361-95-02</p>
+                <p><strong>Время работы:</strong> Пн-Пт: 9:00-21:00, Сб-Вс: 10:00-20:00</p>
+                <div class="location-links">
+                    <a href="https://share.google/7h9je6URJQe4Dhg9L" class="location-link" target="_blank">
+                        <i class="fab fa-google"></i> Google Карты
+                    </a>
+                    <a href="https://yandex.com/maps/org/161686641314/" class="location-link" target="_blank">
+                        <i class="fas fa-map"></i> Яндекс Карты
+                    </a>
+                </div>
+                <div class="image-carousel">
+                    <div class="carousel-image">
+                        <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Салон 1">
+                    </div>
+                    <div class="carousel-image">
+                        <img src="https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Салон 2">
+                    </div>
+                    <div class="carousel-image">
+                        <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Салон 3">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Профиль -->
+        <section id="profile" class="page-section">
+            <h2>Ваш профиль</h2>
+            <div class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img src="https://via.placeholder.com/100x100/ff135a/ffffff?text=Avatar" alt="Аватар" id="profileAvatar">
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="profileName">Имя Фамилия</h2>
+                        <p id="profileEmail">email@example.com</p>
+                    </div>
+                </div>
+
+                <h3>Изменить профиль</h3>
+                <form id="profileForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="avatarFile">Аватарка</label>
+                            <input type="file" id="avatarFile" name="avatarFile" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profileFullName">ФИО</label>
+                            <input type="text" id="profileFullName" name="profileFullName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profilePassword">Новый пароль</label>
+                            <input type="password" id="profilePassword" name="profilePassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePasswordConfirm">Подтвердите пароль</label>
+                            <input type="password" id="profilePasswordConfirm" name="profilePasswordConfirm">
+                        </div>
+                    </div>
+                    <button type="submit" class="button">
+                        <span>Сохранить изменения</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 43">
+                            <polygon points="39.58,4.46 44.11,0 66,21.5 44.11,43 39.58,38.54 56.94,21.5"></polygon>
+                            <polygon points="19.79,4.46 24.32,0 46.21,21.5 24.32,43 19.79,38.54 37.15,21.5"></polygon>
+                            <polygon points="0,4.46 4.53,0 26.42,21.5 4.53,43 0,38.54 17.36,21.5"></polygon>
+                        </svg>
+                    </button>
+                </form>
+
+                <h3 style="margin-top: 2rem;">Актуальные акции</h3>
+                <div class="service-card">
+                    <h3>Скидка 20% на первую стрижку</h3>
+                    <p>Для новых клиентов при записи через сайт</p>
+                </div>
+                <div class="service-card">
+                    <h3>Комплексная услуга со скидкой 15%</h3>
+                    <p>При заказе стрижки и окрашивания одновременно</p>
+                </div>
+                <div class="service-card">
+                    <h3>Скидка 10% в день рождения</h3>
+                    <p>Действует в течение недели до и после дня рождения</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Модальное окно авторизации -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="authModalTitle">Вход / Регистрация</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="authForm">
+                <div class="avatar-preview">
+                    <img src="https://via.placeholder.com/100x100/cccccc/ffffff?text=Avatar" alt="Аватар" id="avatarPreview">
+                </div>
+                <div class="form-group" id="authFullNameGroup">
+                    <label for="authFullName">ФИО</label>
+                    <input type="text" id="authFullName" name="authFullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="authEmail">Email</label>
+                    <input type="email" id="authEmail" name="authEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="authPassword">Пароль</label>
+                    <input type="password" id="authPassword" name="authPassword" required>
+                </div>
+                <div class="form-group" id="authAvatarGroup">
+                    <label for="authAvatar">Аватарка</label>
+                    <input type="file" id="authAvatar" name="authAvatar" accept="image/*">
+                </div>
+                <button type="submit" class="button">
+                    <span id="authButtonText">Зарегистрироваться</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 43">
+                        <polygon points="39.58,4.46 44.11,0 66,21.5 44.11,43 39.58,38.54 56.94,21.5"></polygon>
+                        <polygon points="19.79,4.46 24.32,0 46.21,21.5 24.32,43 19.79,38.54 37.15,21.5"></polygon>
+                        <polygon points="0,4.46 4.53,0 26.42,21.5 4.53,43 0,38.54 17.36,21.5"></polygon>
+                    </svg>
+                </button>
+            </form>
+            <p id="authSwitch" style="text-align: center; margin-top: 1rem;">
+                Уже есть аккаунт? <a href="#" id="switchToLogin">Войти</a>
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <p>LUXE Beauty Salon - Минск &copy; 2023 | Премиальный сервис</p>
+    </footer>
+
+    <script>
+        // Конфигурация Supabase
+        const SUPABASE_URL = 'https://whkpzwybwpwpbuigwfao.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indoa3B6d3lid3B3cGJ1aWd3ZmFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1MjMyNDUsImV4cCI6MjA4MDA5OTI0NX0.vV2G-kd0CuVWjf6PJnFORF9YyWyPhVO2wgGM5FLgFXE';
+        
+        // Инициализация Supabase клиента
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Элементы DOM
+        const navLinks = document.getElementById('navLinks');
+        const hamburger = document.getElementById('hamburger');
+        const pageSections = document.querySelectorAll('.page-section');
+        const authModal = document.getElementById('authModal');
+        const closeModal = document.querySelector('.close-modal');
+        const loginLink = document.getElementById('loginLink');
+        const logoutLink = document.getElementById('logoutLink');
+        const profileLink = document.getElementById('profileLink');
+        const authForm = document.getElementById('authForm');
+        const authModalTitle = document.getElementById('authModalTitle');
+        const authButtonText = document.getElementById('authButtonText');
+        const authSwitch = document.getElementById('authSwitch');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const authAvatar = document.getElementById('authAvatar');
+        const avatarPreview = document.getElementById('avatarPreview');
+        const authFullNameGroup = document.getElementById('authFullNameGroup');
+        const authAvatarGroup = document.getElementById('authAvatarGroup');
+        const bookingForm = document.getElementById('bookingForm');
+        const bookingAlert = document.getElementById('bookingAlert');
+        const bookingSuccess = document.getElementById('bookingSuccess');
+        const appointmentsList = document.getElementById('appointmentsList');
+        const profileForm = document.getElementById('profileForm');
+        const profileAvatar = document.getElementById('profileAvatar');
+        const profileName = document.getElementById('profileName');
+        const profileEmail = document.getElementById('profileEmail');
+        const profileFullName = document.getElementById('profileFullName');
+        
+        // Переменные состояния
+        let isLoginMode = false;
+        let currentUser = null;
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверка авторизации
+            checkAuth();
+            
+            // Настройка навигации
+            setupNavigation();
+            
+            // Настройка модального окна
+            setupModal();
+            
+            // Настройка форм
+            setupForms();
+            
+            // Установка минимальной даты для бронирования (сегодня)
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bookingDate').min = today;
+        });
+        
+        // Проверка авторизации пользователя
+        async function checkAuth() {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                currentUser = user;
+                updateUIForLoggedInUser();
+                loadUserProfile();
+                loadUserAppointments();
+            } else {
+                updateUIForLoggedOutUser();
+            }
+        }
+        
+        // Обновление интерфейса для авторизованного пользователя
+        function updateUIForLoggedInUser() {
+            loginLink.style.display = 'none';
+            logoutLink.style.display = 'block';
+            profileLink.style.display = 'block';
+            
+            // Показываем все страницы, кроме главной
+            document.querySelectorAll('.nav-links a[data-page]').forEach(link => {
+                if (link.getAttribute('data-page') !== 'home') {
+                    link.style.display = 'block';
+                }
+            });
+        }
+        
+        // Обновление интерфейса для неавторизованного пользователя
+        function updateUIForLoggedOutUser() {
+            loginLink.style.display = 'block';
+            logoutLink.style.display = 'none';
+            profileLink.style.display = 'none';
+            
+            // Показываем только главную страницу
+            document.querySelectorAll('.nav-links a[data-page]').forEach(link => {
+                if (link.getAttribute('data-page') !== 'home') {
+                    link.style.display = 'none';
+                }
+            });
+            
+            // Если пользователь не на главной, перенаправляем его туда
+            if (!document.getElementById('home').classList.contains('active')) {
+                showPage('home');
+            }
+        }
+        
+        // Настройка навигации
+        function setupNavigation() {
+            // Обработчик для гамбургер-меню
+            hamburger.addEventListener('click', function() {
+                navLinks.classList.toggle('active');
+            });
+            
+            // Обработчики для навигационных ссылок
+            document.querySelectorAll('.nav-links a[data-page]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    
+                    // Проверяем, требуется ли авторизация для этой страницы
+                    if (page !== 'home' && !currentUser) {
+                        authModal.style.display = 'flex';
+                        return;
+                    }
+                    
+                    showPage(page);
+                    navLinks.classList.remove('active');
+                });
+            });
+            
+            // Обработчик для кнопки выхода
+            logoutLink.addEventListener('click', async function(e) {
+                e.preventDefault();
+                await supabase.auth.signOut();
+                currentUser = null;
+                updateUIForLoggedOutUser();
+                showPage('home');
+            });
+            
+            // Обработчик для кнопки входа
+            loginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                authModal.style.display = 'flex';
+            });
+        }
+        
+        // Показать определенную страницу
+        function showPage(pageId) {
+            pageSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            
+            // Если открываем страницу записей, обновляем список
+            if (pageId === 'appointments' && currentUser) {
+                loadUserAppointments();
+            }
+        }
+        
+        // Настройка модального окна
+        function setupModal() {
+            // Закрытие модального окна
+            closeModal.addEventListener('click', function() {
+                authModal.style.display = 'none';
+                // Сброс формы
+                authForm.reset();
+                avatarPreview.src = 'https://via.placeholder.com/100x100/cccccc/ffffff?text=Avatar';
+            });
+            
+            // Закрытие модального окна при клике вне его
+            window.addEventListener('click', function(e) {
+                if (e.target === authModal) {
+                    authModal.style.display = 'none';
+                    // Сброс формы
+                    authForm.reset();
+                    avatarPreview.src = 'https://via.placeholder.com/100x100/cccccc/ffffff?text=Avatar';
+                }
+            });
+            
+            // Переключение между режимами входа и регистрации
+            switchToLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                isLoginMode = !isLoginMode;
+                updateAuthModalMode();
+            });
+            
+            // Предпросмотр аватарки
+            authAvatar.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // Обновление режима модального окна авторизации
+        function updateAuthModalMode() {
+            if (isLoginMode) {
+                authModalTitle.textContent = 'Вход';
+                authButtonText.textContent = 'Войти';
+                document.getElementById('authSwitch').innerHTML = 'Нет аккаунта? <a href="#" id="switchToLogin">Зарегистрироваться</a>';
+                authFullNameGroup.style.display = 'none';
+                authAvatarGroup.style.display = 'none';
+                avatarPreview.style.display = 'none';
+            } else {
+                authModalTitle.textContent = 'Регистрация';
+                authButtonText.textContent = 'Зарегистрироваться';
+                document.getElementById('authSwitch').innerHTML = 'Уже есть аккаунт? <a href="#" id="switchToLogin">Войти</a>';
+                authFullNameGroup.style.display = 'block';
+                authAvatarGroup.style.display = 'block';
+                avatarPreview.style.display = 'block';
+                
+                // Обновляем обработчик для переключения режима
+                document.getElementById('switchToLogin').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    isLoginMode = !isLoginMode;
+                    updateAuthModalMode();
+                });
+            }
+        }
+        
+        // Настройка форм
+        function setupForms() {
+            // Форма авторизации/регистрации
+            authForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('authEmail').value;
+                const password = document.getElementById('authPassword').value;
+                
+                if (isLoginMode) {
+                    // Вход
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email,
+                        password
+                    });
+                    
+                    if (error) {
+                        alert('Ошибка входа: ' + error.message);
+                    } else {
+                        currentUser = data.user;
+                        authModal.style.display = 'none';
+                        authForm.reset();
+                        updateUIForLoggedInUser();
+                        loadUserProfile();
+                        loadUserAppointments();
+                        showPage('profile');
+                    }
+                } else {
+                    // Регистрация
+                    const fullName = document.getElementById('authFullName').value;
+                    const avatarFile = document.getElementById('authAvatar').files[0];
+                    
+                    const { data, error } = await supabase.auth.signUp({
+                        email,
+                        password
+                    });
+
+                    if (error) {
+                        alert('Ошибка регистрации: ' + error.message);
+                    } else {
+                        // Создание профиля пользователя
+                        const { error: profileError } = await supabase
+                            .from('profiles')
+                            .insert([
+                                {
+                                    id: data.user.id,
+                                    full_name: fullName
+                                }
+                            ]);
+
+                        if (profileError) {
+                            console.error('Ошибка создания профиля:', profileError);
+                            // Не показываем ошибку пользователю, продолжаем
+                        }
+
+                        // Загрузка аватарки, если она есть
+                        if (avatarFile) {
+                            const fileName = `avatar_${data.user.id}.${avatarFile.name.split('.').pop()}`;
+                            const { error: uploadError } = await supabase.storage
+                                .from('avatars')
+                                .upload(fileName, avatarFile);
+
+                            if (!uploadError) {
+                                const { data: publicURL } = supabase.storage
+                                    .from('avatars')
+                                    .getPublicUrl(fileName);
+
+                                // Обновление профиля с URL аватарки
+                                await supabase
+                                    .from('profiles')
+                                    .update({ avatar_url: publicURL.publicUrl })
+                                    .eq('id', data.user.id);
+                            }
+                        }
+
+                        alert('Регистрация успешна! Проверьте вашу почту для подтверждения.');
+                        authModal.style.display = 'none';
+                        authForm.reset();
+                        isLoginMode = true;
+                        updateAuthModalMode();
+                    }
+                }
+            });
+            
+            // Форма записи
+            bookingForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!currentUser) {
+                    authModal.style.display = 'flex';
+                    return;
+                }
+                
+                const fullName = document.getElementById('fullName').value;
+                const bookingDate = document.getElementById('bookingDate').value;
+                const bookingTime = document.getElementById('bookingTime').value;
+                const serviceType = document.getElementById('serviceType').value;
+                const comment = document.getElementById('comment').value;
+                
+                // Проверка на наличие записи в это же время
+                const { data: existingAppointments, error: checkError } = await supabase
+                    .from('appointments')
+                    .select('*')
+                    .eq('date', bookingDate)
+                    .eq('time', bookingTime)
+                    .eq('status', 'pending');
+                
+                if (checkError) {
+                    console.error('Ошибка проверки записей:', checkError);
+                    return;
+                }
+                
+                if (existingAppointments && existingAppointments.length > 0) {
+                    bookingAlert.textContent = 'Внимание! На это время уже есть запись. Если вы запишетесь, вам придется немного подождать окончания другой стрижки в случае если ее не отменят!';
+                    bookingAlert.style.display = 'block';
+                    bookingSuccess.style.display = 'none';
+                } else {
+                    bookingAlert.style.display = 'none';
+                }
+                
+                // Создание записи
+                const { data, error } = await supabase
+                    .from('appointments')
+                    .insert([
+                        {
+                            user_id: currentUser.id,
+                            full_name: fullName,
+                            date: bookingDate,
+                            time: bookingTime,
+                            service_type: serviceType,
+                            comment: comment,
+                            status: 'pending'
+                        }
+                    ]);
+                
+                if (error) {
+                    alert('Ошибка при создании записи: ' + error.message);
+                } else {
+                    bookingSuccess.textContent = 'Запись успешно создана! Мы свяжемся с вами для подтверждения.';
+                    bookingSuccess.style.display = 'block';
+                    bookingForm.reset();
+                    
+                    // Установка минимальной даты для следующей записи
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('bookingDate').min = today;
+                    
+                    loadUserAppointments();
+                }
+            });
+            
+            // Форма профиля
+            profileForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const fullName = document.getElementById('profileFullName').value;
+                const password = document.getElementById('profilePassword').value;
+                const passwordConfirm = document.getElementById('profilePasswordConfirm').value;
+                const avatarFile = document.getElementById('avatarFile').files[0];
+                
+                // Проверка пароля
+                if (password && password !== passwordConfirm) {
+                    alert('Пароли не совпадают!');
+                    return;
+                }
+                
+                // Обновление профиля
+                const updates = {
+                    full_name: fullName,
+                    updated_at: new Date()
+                };
+                
+                // Обновление аватарки, если она загружена
+                if (avatarFile) {
+                    const fileName = `avatar_${currentUser.id}.${avatarFile.name.split('.').pop()}`;
+                    const { error: uploadError } = await supabase.storage
+                        .from('avatars')
+                        .upload(fileName, avatarFile, { upsert: true });
+                    
+                    if (!uploadError) {
+                        const { data: publicURL } = supabase.storage
+                            .from('avatars')
+                            .getPublicUrl(fileName);
+                        
+                        updates.avatar_url = publicURL.publicUrl;
+                        profileAvatar.src = publicURL.publicUrl;
+                    }
+                }
+                
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .update(updates)
+                    .eq('id', currentUser.id);
+                
+                if (profileError) {
+                    alert('Ошибка обновления профиля: ' + profileError.message);
+                    return;
+                }
+                
+                // Обновление пароля, если он указан
+                if (password) {
+                    const { error: passwordError } = await supabase.auth.updateUser({
+                        password: password
+                    });
+                    
+                    if (passwordError) {
+                        alert('Ошибка обновления пароля: ' + passwordError.message);
+                        return;
+                    }
+                }
+                
+                profileName.textContent = fullName;
+                alert('Профиль успешно обновлен!');
+                profileForm.reset();
+                document.getElementById('profilePassword').value = '';
+                document.getElementById('profilePasswordConfirm').value = '';
+            });
+        }
+        
+        // Загрузка профиля пользователя
+        async function loadUserProfile() {
+            if (!currentUser) return;
+            
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+            
+            if (error) {
+                console.error('Ошибка загрузки профиля:', error);
+                return;
+            }
+            
+            if (data) {
+                profileName.textContent = data.full_name || 'Имя не указано';
+                profileEmail.textContent = currentUser.email;
+                profileFullName.value = data.full_name || '';
+                
+                if (data.avatar_url) {
+                    profileAvatar.src = data.avatar_url;
+                }
+            }
+        }
+        
+        // Загрузка записей пользователя
+        async function loadUserAppointments() {
+            if (!currentUser) return;
+            
+            const { data, error } = await supabase
+                .from('appointments')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('date', { ascending: true })
+                .order('time', { ascending: true });
+            
+            if (error) {
+                console.error('Ошибка загрузки записей:', error);
+                return;
+            }
+            
+            appointmentsList.innerHTML = '';
+            
+            if (data && data.length > 0) {
+                data.forEach(appointment => {
+                    const row = document.createElement('tr');
+                    
+                    // Форматирование имени (показываем только имя)
+                    const nameParts = appointment.full_name.split(' ');
+                    const displayName = nameParts[0] + (nameParts[1] ? ' ' + nameParts[1].charAt(0) + '.' : '');
+                    
+                    // Определение класса статуса
+                    let statusClass = '';
+                    let statusText = '';
+                    
+                    switch (appointment.status) {
+                        case 'pending':
+                            statusClass = 'status-pending';
+                            statusText = 'Ожидание';
+                            break;
+                        case 'confirmed':
+                            statusClass = 'status-confirmed';
+                            statusText = 'Подтверждено';
+                            break;
+                        case 'cancelled':
+                            statusClass = 'status-cancelled';
+                            statusText = 'Отменено';
+                            break;
+                        case 'completed':
+                            statusClass = 'status-completed';
+                            statusText = 'Завершено';
+                            break;
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${appointment.date}</td>
+                        <td>${appointment.time}</td>
+                        <td>${displayName}</td>
+                        <td>${appointment.service_type}</td>
+                        <td class="${statusClass}">${statusText}</td>
+                        <td>
+                            ${appointment.status === 'pending' ? 
+                                `<button class="cancel-appointment" data-id="${appointment.id}">Отменить</button>` : 
+                                ''}
+                        </td>
+                    `;
+                    
+                    appointmentsList.appendChild(row);
+                });
+                
+                // Добавляем обработчики для кнопок отмены
+                document.querySelectorAll('.cancel-appointment').forEach(button => {
+                    button.addEventListener('click', async function() {
+                        const appointmentId = this.getAttribute('data-id');
+                        await cancelAppointment(appointmentId);
+                    });
+                });
+            } else {
+                appointmentsList.innerHTML = '<tr><td colspan="6" style="text-align: center;">У вас нет записей</td></tr>';
+            }
+        }
+        
+        // Отмена записи
+        async function cancelAppointment(appointmentId) {
+            if (!confirm('Вы уверены, что хотите отменить запись?')) {
+                return;
+            }
+            
+            const { error } = await supabase
+                .from('appointments')
+                .update({ status: 'cancelled' })
+                .eq('id', appointmentId);
+            
+            if (error) {
+                alert('Ошибка отмены записи: ' + error.message);
+            } else {
+                alert('Запись успешно отменена!');
+                loadUserAppointments();
+            }
+        }
+    </script>
+</body>
+</html>
