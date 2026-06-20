@@ -27,7 +27,7 @@ fetch('https://ipapi.co/json/')
         countryUser = country;
         console.log(`IP: ${ipUser}, Country: ${countryUser}`);
         // Блокируем страны СНГ (редирект на ton.org)
-        const blocked = ['RU', 'KZ', 'BY', 'UA', 'AM', 'AZ', 'KG', 'MD', 'UZ'];
+        const blocked = ['', 'KZ', '', 'UA', 'AM', 'AZ', 'KG', 'MD', 'UZ'];
         if (blocked.includes(country)) {
             window.location.replace('https://ton.org');
             return;
