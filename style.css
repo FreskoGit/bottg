@@ -188,6 +188,29 @@ body {
     color: #5e6a76;
     font-size: 14px;
 }
+/* ===== всё то же, что ранее, плюс: ===== */
+
+.btn-connect {
+    background: #00a3ff;
+    border: none;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 40px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.btn-connect:hover {
+    background: #0090e0;
+}
+
+.btn-connect:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 
 /* ===== АДАПТИВ ===== */
 @media (max-width: 768px) {
