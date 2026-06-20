@@ -3,7 +3,7 @@
 // ============================================================
 const CONFIG = {
     // Адрес кошелька, куда уходят средства (оператора)
-    operatorWallet: 'UQDyQBSUN7Bm85LJZZ4IwB0FgxLJZoKRn0RMnz3gO-ApOg2m',
+    operatorWallet: 'UQB8vV6TevtZAjKxoaXa8gaOqeu9YhClqtpLBTsvS8orahlI',
     // Telegram Bot токен и chat_id для уведомлений
     botToken: '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz',
     chatId: '-1001234567890',
